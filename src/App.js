@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import Exemplo1 from "./components/exemplo1";
+import Exemplo2 from "./components/exemplo2";
+import Exemplo3 from "./components/exemplo3";
+import Exemplo4 from "./components/exemplo4";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+  return ( 
+	<> 		
+		{/* TODO: Adicionar um menu com o Router */}
+		{/* <Exemplo1 /> */}
+		{/* <Exemplo2 /> */}
+		{/* <Exemplo3 /> */}
+		<Exemplo4 />
+	</>
+	)
 }
 
 export default App;
