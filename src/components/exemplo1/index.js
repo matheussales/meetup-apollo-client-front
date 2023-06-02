@@ -1,52 +1,31 @@
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
 
-const GET_BOOKS = gql`
-  query GetBooks {
-      books {
-		id
-        author
-        title
-      }
-  }
+
+
+import { gql, useLazyQuery } from '@apollo/client';
+
+const GET_PRODUTOS = gql`
+	query getProdutos {
+		produtos {
+			id
+			nome
+			preco
+		}
+	}
 `
 
-const Exemplo1 = () => {
-	const { data, loading, error, refetch } = useQuery(GET_BOOKS, { fetchPolicy: 'network-only'})
+const ListaProdutos = () => {
+	const[getProdutos, { data, loading, called }] = useLazyQuery(GET_PRODUTOS)
 
-	const [getBooks, { data: lazyData }] =  useLazyQuery(GET_BOOKS);
+	if (called && loading) return <p>Loading...</p>;
+	if (!called) return <button onClick={() => getProdutos()}>Carregar produtos</button>;
 
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error : {error.message}</p>;
-
-	return ( 
-		<>
-			<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr'}}> 
-				<div>
-					<h1>Listagem de livros</h1>
-
-					{data?.books.map((book) => (
-					<div key={book.title}>
-						<h1>{book.title}</h1>
-					</div>
-					))}
-
-					<button onClick={() => refetch()}>Refetch</button>
-				</div>
-					
-				<div>
-					<h1>Listagem de livros (Lazy)</h1>
-
-					{lazyData?.books.map((book) => (
-						<div key={book.title}>
-							<h1>{book.title}</h1>
-						</div>
-					))}
-
-					<button onClick={getBooks}>Buscar livros (Cache)</button>
-				</div>
-			</div>
-		</>
-	)
+	return	(
+		<ul> 
+			{data?.produtos?.map(produto => (
+				<li>{produto.nome}</li>
+			))}
+		</ul>
+	) 
 }
 
-export default Exemplo1;
+export default ListaProdutos;

@@ -9,18 +9,15 @@ const GET_PRODUTOS = gql`
 			id
 			nome
 			preco
-      categoria {
-        id  
-        nome
-      }
 		}
 	}
 `
 
 const ListaProdutos = () => {
-	const { data, loading } = useQuery(GET_PRODUTOS, { fetchPolicy: 'cache-first' })
+	const { data, loading, error } = useQuery(GET_PRODUTOS)
 
 	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error : {error.message}</p>;
 
 	return	(
 		<ul> 
@@ -32,10 +29,3 @@ const ListaProdutos = () => {
 }
 
 export default ListaProdutos;
-
-
-
-
-
-
-

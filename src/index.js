@@ -1,13 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+
+const cacheOptions = {
+  typePolicies: {
+    Produto: {
+      fields: {
+        estaNoCarrinho: { 
+          read(cachedValue = false) {
+            return cachedValue;
+          }
+        }
+      }
+    }
+  }
+}
+
+const cache = new InMemoryCache(cacheOptions);
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000',
-  cache: new InMemoryCache(),
+  cache,
 });
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
