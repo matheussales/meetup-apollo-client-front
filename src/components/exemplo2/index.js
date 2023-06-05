@@ -1,26 +1,22 @@
-
-
-
-
 import { gql, useMutation } from '@apollo/client';
 
-const ADD_PRODUTO = gql`
-  mutation addProduto($produto: ProdutoInput) {
-    addProduto(produto: $produto) {
+const ADD_PRODUCT = gql`
+  mutation addProduct($product: ProductInput) {
+    addProduct(product: $product) {
       id
-      nome
-      preco
+      name
+      price
     }
   }
 `;
 
-const FormularioProdutos = () => {
-    const [addProduto, { loading }] = useMutation(ADD_PRODUTO);
+const ProductForm = () => {
+    const [addProduct, { loading }] = useMutation(ADD_PRODUCT);
   
     if (loading) return 'Submitting...';
 
-    let nomeInput;
-    let precoInput;
+    let nameInput;
+    let priceInput;
     
     return (
       <div>
@@ -28,25 +24,28 @@ const FormularioProdutos = () => {
           onSubmit={e => {
             e.preventDefault();
 
-            addProduto({ 
+            addProduct({ 
               variables: { 
-                produto: { 
-                    nome: nomeInput.value,
-                    preco: parseInt(precoInput.value)
+                product: { 
+                    name: nameInput.value,
+                    price: parseInt(priceInput.value)
                 } 
               }
             });
 
-            nomeInput.value = '';
+            nameInput.value = '';
           }}
         >
-          <input ref={node => { nomeInput = node; }} placeholder="Nome" />
-          <input ref={node => { precoInput = node; }} placeholder="Preço" />
-          
-          <button type="submit">Add Produto</button>
+          <input ref={node => { nameInput = node; }} placeholder="Nome" />
+          <br />
+          <br />
+          <input ref={node => { priceInput = node; }} placeholder="Preço" />
+          <br />
+          <br />
+          <button type="submit">Adicionar produto</button>
         </form>
       </div>
     );
 }
 
-export default FormularioProdutos;
+export default ProductForm;

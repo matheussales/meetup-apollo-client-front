@@ -1,31 +1,28 @@
+import { gql, useQuery } from '@apollo/client';
 
-
-
-import { gql, useLazyQuery } from '@apollo/client';
-
-const GET_PRODUTOS = gql`
-	query getProdutos {
-		produtos {
+const GET_PRODUCTS = gql`
+	query getProduct {
+		products {
 			id
-			nome
-			preco
+			name
+			price
 		}
 	}
 `
 
-const ListaProdutos = () => {
-	const[getProdutos, { data, loading, called }] = useLazyQuery(GET_PRODUTOS)
+const ProductList = () => {
+	const { data, loading, error } = useQuery(GET_PRODUCTS)
 
-	if (called && loading) return <p>Loading...</p>;
-	if (!called) return <button onClick={() => getProdutos()}>Carregar produtos</button>;
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error : {error.message}</p>;
 
 	return	(
 		<ul> 
-			{data?.produtos?.map(produto => (
-				<li>{produto.nome}</li>
+			{data?.products?.map(product => (
+				<li key={product.name}>{product.name} - R${product.price},00</li>
 			))}
 		</ul>
 	) 
 }
 
-export default ListaProdutos;
+export default ProductList;

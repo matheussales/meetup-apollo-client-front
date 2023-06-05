@@ -1,13 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const cacheOptions = {
   typePolicies: {
-    Produto: {
+    Product: {
       fields: {
-        estaNoCarrinho: { 
+        isInCart: { 
+          read(cachedValue = false) {
+            return cachedValue;
+          }
+        },
+        isInWishList: { 
           read(cachedValue = false) {
             return cachedValue;
           }

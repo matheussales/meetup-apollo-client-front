@@ -1,30 +1,30 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 
-const GET_PRODUTOS = gql`
-    query getProdutos {
-        produtos {
+const GET_PRODUCTS = gql`
+    query getProducts {
+        products {
             id
-            nome
-            preco
-            estaNoCarrinho @client 
+            name
+            price
+            isInWishList @client 
         }
     }
 `
 
-const ListaProdutos = () => {
-	const { data, loading } = useQuery(GET_PRODUTOS)
+const ListaProducts = () => {
+	const { data, loading } = useQuery(GET_PRODUCTS)
     const client = useApolloClient() 
 
-    const addCarrinho = (produto) => {
+    const addProductInWishList = (product) => {
         client.writeFragment({
-            id: `Produto:${produto.id}`,
+            id: `Product:${product.id}`,
             fragment: gql`
-              fragment MeuProdutoEstaNoCarrinho on Produto {
-                estaNoCarrinho @client
+              fragment MeuProductIsInCart on Product {
+                isInWishList @client
               }
             `,
             data: {
-                estaNoCarrinho: !produto.estaNoCarrinho,
+                isInWishList: !product.isInWishList,
             },
         });
     }
@@ -33,14 +33,16 @@ const ListaProdutos = () => {
 
 	return	(
 		<ul style={{ display: 'flex' }}> 
-			{data?.produtos?.map(produto => (
-                <div style={{ borderBlockColor: 'black', marginRight: 20 }} key={produto.id}>
-                    <li style={{  marginRight: 20 }}>{produto.nome}</li>
-                    <button onClick={() => addCarrinho(produto)}>{produto.estaNoCarrinho ? 'Remover' : 'Adicionar' }</button>
+			{data?.products?.map(product => (
+                <div style={{ borderBlockColor: 'black', marginRight: 20 }} key={product.id}>
+                    <li style={{  marginRight: 20 }}>{product.name} {product.isInWishList ? '❤️' : null }</li> 
+                    <button onClick={() => addProductInWishList(product)}>
+                        {product.isInWishList ? 'Remover favoritos' : 'Adicionar favoritos' }
+                    </button>
                 </div>
 			))}
 		</ul>
 	) 
 }
 
-export default ListaProdutos;
+export default ListaProducts;

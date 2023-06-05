@@ -1,70 +1,68 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client';
 
-const GET_PRODUTOS = gql`
-    query getProdutos {
-        produtos {
+const GET_PRODUCTS = gql`
+    query getProducts {
+        products {
             id
-            nome
-            preco
-            estaNoCarrinho @client 
+            name
+            price
+            isInCart @client 
         }
     }
 `
 
-const GET_CARRINHO = gql`
-    query getCarrinho {
-        carrinho @client {
+const GET_CART = gql`
+    query getCart {
+        cart @client {
             id
-            produtos {
+            products {
                 id
-                nome
-                preco
+                name
+                price
             }
         }
     }
 `
 
-const ListaProdutos = () => {
-    const { data, loading } = useQuery(GET_PRODUTOS)
-    const { data: carrinhoData } = useQuery(GET_CARRINHO, { fetchPolicy: 'cache-only' })
+const ListaProducts = () => {
+    const { data, loading } = useQuery(GET_PRODUCTS)
     const client = useApolloClient();
+    const { cart } = client.readQuery({ query: GET_CART });
 
-    const addCarrinho = (produto) => {
-        const { carrinho } = client.readQuery({ query: GET_CARRINHO});
-
-        if (produto?.estaNoCarrinho) {
-            const newProdutos = carrinho?.produtos?.filter(produtoNoCarrinho => produtoNoCarrinho.id !== produto.id);
+    const addCart = (product) => {
+        if (product?.isInCart) {
+            const newProducts = cart?.products?.filter(productNoCart => productNoCart.id !== product.id);
 
             client.writeQuery({
-                query: GET_CARRINHO,
+                query: GET_CART,
                 data: {
-                    carrinho: {
-                        ...carrinho,
-                        produtos: newProdutos
+                    cart: {
+                        ...cart,
+                        products: newProducts
                     }
                 }
             })
         } else {
             client.writeQuery({
-                query: GET_CARRINHO,
+                query: GET_CART,
                 data: {
-                    carrinho: {
-                        ...carrinho,
-                        produtos: [...carrinho.produtos, { ...produto, __typename: 'Produto'}],
+                    cart: {
+                        ...cart,
+                        products: [...cart.products, { ...product, __typename: 'Product'}],
                     }
                 }
             })
         }
 
         client.writeFragment({
-            id: `Produto:${produto.id}`,
+            id: `Product:${product.id}`,
             fragment: gql`
-              fragment MeuProdutoEstaNoCarrinho on Produto {
-                estaNoCarrinho @client
+              fragment MeuProductisInCart on Product {
+                isInCart @client
               }
             `,
             data: {
-                estaNoCarrinho: !produto.estaNoCarrinho,
+                isInCart: !product.isInCart,
             },
         });
     }
@@ -73,12 +71,12 @@ const ListaProdutos = () => {
 
 	return	(
         <>
-        <div>Carrinho: {carrinhoData?.carrinho?.produtos?.length} </div>
+        <div>Cart: {cart?.products?.length} </div>
 		<ul style={{ display: 'flex' }}> 
-			{data?.produtos?.map(produto => (
-                <div style={{ borderBlockColor: 'black', marginRight: 20 }} key={produto.id}>
-                    <li style={{  marginRight: 20 }}>{produto.nome}</li>
-                    <button onClick={() => addCarrinho(produto)}>{produto.estaNoCarrinho ? 'Remover' : 'Adicionar' }</button>
+			{data?.products?.map(produtc => (
+                <div style={{ borderBlockColor: 'black', marginRight: 20 }} key={produtc.id}>
+                    <li style={{  marginRight: 20 }}>{produtc.name}</li>
+                    <button onClick={() => addCart(produtc)}>{produtc.isInCart ? 'Remover' : 'Adicionar' }</button>
                 </div>
 			))}
 		</ul>
@@ -86,4 +84,4 @@ const ListaProdutos = () => {
 	) 
 }
 
-export default ListaProdutos;
+export default ListaProducts;
